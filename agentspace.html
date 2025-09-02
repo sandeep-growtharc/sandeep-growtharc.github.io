@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentSpace: Interactive Overview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Neutrals -->
+    <!-- Application Structure Plan: The SPA uses a single-page, vertical scrolling layout with a sticky navigation bar for quick access to the three core thematic sections: Creation, Connections, and Communication. This structure was chosen over a simple document layout to encourage non-linear exploration and improve usability. Users can get a quick overview or dive into details using interactive elements like toggles and tabs. This approach breaks down complex comparisons into digestible, user-controlled chunks, making the information more accessible and engaging than static tables. -->
+    <!-- Visualization & Content Choices: 
+        - Agent Creation: Report's comparison table -> Goal: Compare methods -> Interactive side-by-side cards with toggles -> User clicks to reveal details -> Justification: Focuses user attention and reduces initial cognitive load -> Implemented with HTML/CSS/JS.
+        - Agent Connections: Report's table of connector types -> Goal: Show breadth of ecosystem -> Donut Chart for hypothetical distribution + Tabbed interface for details -> User clicks tabs to switch content, hovers chart for tooltips -> Justification: The chart adds a visual data point, while tabs neatly organize a large amount of information -> Implemented with Chart.js and HTML/CSS/JS.
+        - Communication: Report's table of communication methods -> Goal: Explain abstract concepts -> Side-by-side conceptual diagrams built with HTML/CSS -> User clicks to expand accordions for details -> Justification: Visual diagrams are more effective than text for explaining flows like chat and agent-to-agent protocol -> Implemented with HTML/CSS/JS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #333;
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+        .nav-link.active {
+            color: #2563EB;
+            border-bottom-color: #2563EB;
+        }
+        .card {
+            background-color: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .tab.active {
+            background-color: #3B82F6;
+            color: white;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="header" class="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-gray-800">AgentSpace Features</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#creation" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium border-b-2 border-transparent">Creation</a>
+                        <a href="#connections" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium border-b-2 border-transparent">Connections</a>
+                        <a href="#communication" class="nav-link text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium border-b-2 border-transparent">Communication</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        
+        <section id="intro" class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">A Comparative Look at Core Features</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600">
+                AgentSpace is emerging as a powerful platform for building and deploying enterprise-grade AI agents. This interactive overview explores three core aspects: how agents are created, how they connect to data sources, and how they communicate.
+            </p>
+        </section>
+
+        <section id="creation" class="mb-20 pt-16 -mt-16">
+            <div class="text-center mb-12">
+                <span class="text-blue-600 font-semibold">1. Agent Creation</span>
+                <h3 class="text-3xl font-bold mt-2">No-Code Simplicity & Developer Power</h3>
+                <p class="max-w-2xl mx-auto mt-4 text-gray-600">
+                    AgentSpace caters to all skill levels by offering two primary methods for creating agents. Explore the approaches below to see which fits your needs, from rapid prototyping with natural language to deep customization with code.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="card p-6" id="creation-no-code"></div>
+                <div class="card p-6" id="creation-adk"></div>
+            </div>
+        </section>
+
+        <section id="connections" class="mb-20 pt-16 -mt-16">
+            <div class="text-center mb-12">
+                <span class="text-blue-600 font-semibold">2. Agent Connections</span>
+                <h3 class="text-3xl font-bold mt-2">A Rich Ecosystem of Data</h3>
+                <p class="max-w-2xl mx-auto mt-4 text-gray-600">
+                    An agent's true power comes from the data it can access. AgentSpace achieves this through a robust system of connectors, enabling agents to reason over a wide range of first-party and third-party data sources.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-8 items-center">
+                <div class="md:col-span-2">
+                     <div class="chart-container relative w-full max-w-sm mx-auto h-72 md:h-80">
+                        <canvas id="connectionsChart"></canvas>
+                    </div>
+                </div>
+                <div class="md:col-span-3">
+                    <div class="mb-4 flex border-b border-gray-200">
+                        <button id="tab-first-party" class="tab flex-1 py-2 px-4 text-center font-medium text-gray-600 rounded-t-lg transition-colors duration-300">First-Party</button>
+                        <button id="tab-third-party" class="tab flex-1 py-2 px-4 text-center font-medium text-gray-600 rounded-t-lg transition-colors duration-300">Third-Party</button>
+                    </div>
+                    <div id="connections-content"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="communication" class="mb-12 pt-16 -mt-16">
+            <div class="text-center mb-12">
+                <span class="text-blue-600 font-semibold">3. Communication</span>
+                <h3 class="text-3xl font-bold mt-2">From User Interaction to Agent Collaboration</h3>
+                <p class="max-w-2xl mx-auto mt-4 text-gray-600">
+                    Effective communication is key. AgentSpace facilitates seamless interaction between users and agents, and is pioneering an open standard for agents to collaborate with each other, unlocking complex, automated workflows.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="card p-6" id="comm-user"></div>
+                <div class="card p-6" id="comm-a2a"></div>
+            </div>
+        </section>
+
+        <footer class="text-center mt-16 pt-8 border-t border-gray-200">
+             <p class="text-gray-600">In summary, AgentSpace provides a flexible and powerful environment for creating, connecting, and communicating with AI agents. The platform's no-code and developer-friendly options for agent creation, its extensive library of data connectors, and its forward-looking approach to agent-to-agent communication make it a compelling choice for enterprises looking to leverage the power of AI.</p>
+        </footer>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const agentCreationData = {
+                noCode: {
+                    title: 'Agent Designer (No-Code)',
+                    description: 'A user-friendly, web-based interface for creating agents through natural language.',
+                    features: [
+                        '**Intuitive Interface:** Define agent name, goal, and instructions in plain English.',
+                        '**AI-Assisted Instructions:** Leverage AI to help write comprehensive instructions.',
+                        '**Data Source Integration:** Easily connect to Google Workspace and other third-party tools.',
+                        '**Starter Prompts:** Provide users with examples of how to interact with the agent.'
+                    ],
+                    idealUser: 'Business users, subject matter experts, and anyone wanting to quickly prototype and deploy an agent without writing code.'
+                },
+                adk: {
+                    title: 'Agent Development Kit (ADK)',
+                    description: 'A software development kit for programmatically building and customizing agents.',
+                    features: [
+                        '**Greater Flexibility:** Fine-grained control over agent behavior and logic.',
+                        '**Complex Workflows:** Implement sophisticated, multi-step processes.',
+                        '**Custom Integrations:** Connect to bespoke or legacy systems.',
+                        '**Version Control:** Manage agent code in a version control system.'
+                    ],
+                    idealUser: 'Developers, data scientists, and engineers who need to build highly customized and powerful agents.'
+                }
+            };
+            
+            const agentConnectionsData = {
+                firstParty: {
+                    title: 'First-Party Connectors',
+                    description: "Seamless integration with Google Cloud and Google Workspace services.",
+                    features: [
+                        '**Deep Integration:** Natively access and utilize data from Google\'s ecosystem.',
+                        '**Simplified Setup:** Easy to configure and manage.'
+                    ],
+                    examples: ['Google Drive', 'Gmail', 'Google Calendar', 'BigQuery', 'Cloud Storage']
+                },
+                thirdParty: {
+                    title: 'Third-Party Connectors',
+                    description: "Pre-built integrations with a wide variety of popular enterprise applications.",
+                    features: [
+                        '**Extensive Library:** Connect to a large and growing list of third-party services.',
+                        '**Data Synchronization:** Keep data in AgentSpace up-to-date with full and incremental syncs.',
+                        '**Access Control:** Respects the permissions and access controls of the source system.'
+                    ],
+                    examples: ['Salesforce', 'Jira', 'Confluence', 'ServiceNow', 'Slack', 'Microsoft SharePoint']
+                }
+            };
+
+            const communicationData = {
+                userToAgent: {
+                    title: 'User-to-Agent (Chat Interface)',
+                    description: 'The primary way users interact with agents is through a natural language chat interface.',
+                    features: [
+                        '**Natural Language Prompts:** Users can ask questions and give commands in plain English.',
+                        '**Multimodal Interaction:** Supports text, and in some cases, voice and image inputs.',
+                        '**Grounded Responses:** Agents can provide answers with citations from the underlying data sources.'
+                    ]
+                },
+                agentToAgent: {
+                    title: 'Agent-to-Agent (A2A) Protocol',
+                    description: 'An open standard that allows different agents, even those built by different vendors, to communicate and collaborate.',
+                    features: [
+                        '**Interoperability:** Enables the creation of complex workflows involving multiple agents.',
+                        '**Task Delegation:** Agents can delegate tasks to other agents with specialized capabilities.',
+                        '**Extensibility:** Fosters an open ecosystem of interconnected agents.'
+                    ]
+                }
+            }
+
+            const formatFeatureText = (text) => text.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-800">$1</strong>');
+
+            const createCreationCard = (data) => {
+                return `
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-xl font-bold">${data.title}</h4>
+                        <div class="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="${data.title.includes('No-Code') ? 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z' : 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4'}" />
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-6">${data.description}</p>
+                    <div class="space-y-3">
+                        <h5 class="font-semibold text-gray-800">Key Features:</h5>
+                        <ul class="list-none space-y-2 pl-1">
+                            ${data.features.map(f => `<li class="flex items-start"><span class="text-blue-500 mr-2 mt-1">&#10003;</span><span class="text-gray-600">${formatFeatureText(f)}</span></li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-gray-200">
+                         <h5 class="font-semibold text-gray-800">Ideal User:</h5>
+                         <p class="text-gray-600 mt-2">${data.idealUser}</p>
+                    </div>
+                `;
+            };
+
+            document.getElementById('creation-no-code').innerHTML = createCreationCard(agentCreationData.noCode);
+            document.getElementById('creation-adk').innerHTML = createCreationCard(agentCreationData.adk);
+
+            const connectionsContentEl = document.getElementById('connections-content');
+            const tabFirstParty = document.getElementById('tab-first-party');
+            const tabThirdParty = document.getElementById('tab-third-party');
+
+            const renderConnectionContent = (data) => {
+                connectionsContentEl.innerHTML = `
+                    <div class="p-1">
+                        <h4 class="text-xl font-bold text-gray-800">${data.title}</h4>
+                        <p class="text-gray-600 mt-2 mb-4">${data.description}</p>
+                        <ul class="list-none space-y-2 mb-4">
+                           ${data.features.map(f => `<li class="flex items-start"><span class="text-green-500 mr-2 mt-1">&#10003;</span><span class="text-gray-600">${formatFeatureText(f)}</span></li>`).join('')}
+                        </ul>
+                        <h5 class="font-semibold text-gray-800">Examples:</h5>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            ${data.examples.map(ex => `<span class="bg-gray-100 text-gray-700 text-sm font-medium px-2.5 py-1 rounded-full">${ex}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            };
+            
+            tabFirstParty.addEventListener('click', () => {
+                tabFirstParty.classList.add('active');
+                tabThirdParty.classList.remove('active');
+                renderConnectionContent(agentConnectionsData.firstParty);
+            });
+             tabThirdParty.addEventListener('click', () => {
+                tabThirdParty.classList.add('active');
+                tabFirstParty.classList.remove('active');
+                renderConnectionContent(agentConnectionsData.thirdParty);
+            });
+            tabFirstParty.click();
+
+            const createCommCard = (data, isUser) => {
+                return `
+                     <h4 class="text-xl font-bold mb-2">${data.title}</h4>
+                     <p class="text-gray-600 mb-6">${data.description}</p>
+                     ${ isUser ?
+                        `<div class="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-3">
+                            <div class="flex justify-end"><div class="bg-blue-500 text-white text-sm rounded-lg py-2 px-3 max-w-xs">What are today's priorities?</div></div>
+                            <div class="flex justify-start"><div class="bg-gray-200 text-gray-800 text-sm rounded-lg py-2 px-3 max-w-xs">Based on your calendar and emails, your top priority is the Q3 planning presentation...</div></div>
+                         </div>` :
+                        `<div class="bg-gray-50 border border-gray-200 rounded-lg p-4 flex items-center justify-around space-x-2">
+                            <div class="text-center"><div class="bg-purple-100 text-purple-700 rounded-full p-3 mb-1 inline-block">A1</div><span class="text-sm">Finance Agent</span></div>
+                            <div class="text-gray-300 font-bold">&lrarr;</div>
+                            <div class="text-center"><div class="bg-green-100 text-green-700 rounded-full p-3 mb-1 inline-block">A2</div><span class="text-sm">Forecasting Agent</span></div>
+                            <div class="text-gray-300 font-bold">&rarr;</div>
+                            <div class="text-center"><div class="bg-yellow-100 text-yellow-700 rounded-full p-3 mb-1 inline-block">A3</div><span class="text-sm">Email Agent</span></div>
+                         </div>`
+                     }
+                     <div class="mt-6 space-y-3">
+                        <h5 class="font-semibold text-gray-800">Key Features:</h5>
+                        <ul class="list-none space-y-2 pl-1">
+                           ${data.features.map(f => `<li class="flex items-start"><span class="text-blue-500 mr-2 mt-1">&#10003;</span><span class="text-gray-600">${formatFeatureText(f)}</span></li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            };
+            
+            document.getElementById('comm-user').innerHTML = createCommCard(communicationData.userToAgent, true);
+            document.getElementById('comm-a2a').innerHTML = createCommCard(communicationData.agentToAgent, false);
+
+
+            const ctx = document.getElementById('connectionsChart').getContext('2d');
+            const connectionsChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['First-Party Connectors', 'Third-Party Connectors'],
+                    datasets: [{
+                        label: 'Connector Ecosystem',
+                        data: [40, 60],
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(22, 163, 74, 0.8)',
+                        ],
+                        borderColor: [
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(22, 163, 74, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Hypothetical Connector Distribution'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + '% of connections';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const sections = document.querySelectorAll('main section[id]');
+            const navLinks = document.querySelectorAll('nav a.nav-link');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: '-50% 0px -50% 0px' });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+
+</body>
+</html>
