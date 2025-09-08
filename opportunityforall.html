@@ -53,44 +53,47 @@
             </div>
         </header>
 
-        <section id="the-narrative" class="py-20 px-4 bg-white">
+        <section id="the-narrative" class="py-20 px-4 bg-white text-gray-800">
             <div class="max-w-4xl mx-auto">
                 <div class="text-center mb-12">
                      <h2 class="text-3xl font-bold text-gray-800">The Story We're Told</h2>
                      <p class="mt-2 text-gray-600">We often celebrate success stories built on two key pillars.</p>
                 </div>
                 <div class="grid md:grid-cols-2 gap-8 text-center">
-                    <div class="p-8 rounded-lg border border-gray-200">
+                    <div class="p-8 rounded-lg border border-gray-200 bg-white">
                         <span class="text-4xl mb-4 block">✨</span>
-                        <h3 class="text-xl font-semibold mb-2">Talent</h3>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">Talent</h3>
                         <p class="text-gray-600">We rightfully admire the incredible skill and innate ability that fuel great achievements. It's a foundational element of every success story we hear.</p>
                     </div>
-                    <div class="p-8 rounded-lg border border-gray-200">
-                        <span class="text-4xl mb-4 block">💪</span>
-                        <h3 class="text-xl font-semibold mb-2">Hard Work</h3>
+                    <div class="p-8 rounded-lg border border-gray-200 bg-white">
+                        <span class="text-4xl mb-4 block">💪🏻</span>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">Hard Work</h3>
                         <p class="text-gray-600">The relentless effort and determination that transform potential into reality. It's the engine that drives progress and unlocks new opportunities.</p>
                     </div>
                 </div>
                  <div class="mt-8 text-center">
-                    <div class="p-8 rounded-lg border border-gray-200">
+                    <div class="p-8 rounded-lg border border-gray-200 bg-white">
                         <span class="text-4xl mb-4 block">💡</span>
-                        <h3 class="text-xl font-semibold mb-2">The Missing Piece</h3>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">The Missing Piece</h3>
                         <p class="text-gray-600">But what about the role of opportunity? It's the often-invisible element that can change the entire trajectory of a journey, making the path to success unequal.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="opportunity" class="py-20 px-4">
+        <section id="opportunity" class="py-20 px-4 text-gray-800">
             <div class="max-w-4xl mx-auto text-center">
                 <h2 class="text-3xl font-bold text-gray-800">The Power of a Single Chance</h2>
                 <p class="mt-2 text-gray-600 max-w-2xl mx-auto">A single opportunity can bridge the gap between hard work and success. Watch what happens.</p>
-                <div class="mt-12 p-8 border rounded-lg bg-white relative overflow-hidden">
+                <div class="mt-12 p-8 border border-gray-200 rounded-lg bg-white relative overflow-hidden">
                     <div class="flex justify-between items-center w-full max-w-2xl mx-auto relative">
-                        <span id="runner-start" class="text-2xl z-20 relative">🏃</span>
+                        <span id="runner-start" class="text-2xl z-20 relative">🏃🏻</span>
                         <div class="flex-1 relative mx-4">
                             <div id="chasm" class="h-2 rounded-full border-t-2 border-b-2 border-gray-400 border-dashed"></div>
                             <div id="bridge" class="absolute left-0 top-0 h-full bg-green-500 rounded-full transition-all duration-1000 z-10" style="width: 0;"></div>
+                            <div id="hurdle" class="absolute top-0 w-8 h-full z-20 transition-all duration-1000" style="left: 50%; transform: translateX(-50%) rotate(0deg); opacity: 0;">
+                                <div class="bg-red-500 rounded-full w-full h-full"></div>
+                            </div>
                         </div>
                         <span id="trophy-goal" class="text-2xl z-20">🏆</span>
                     </div>
@@ -100,15 +103,15 @@
             </div>
         </section>
 
-        <section id="barriers" class="py-20 px-4 bg-white">
+        <section id="barriers" class="py-20 px-4 bg-white text-gray-800">
              <div class="max-w-5xl mx-auto text-center">
                 <h2 class="text-3xl font-bold text-gray-800">An Uneven Playing Field</h2>
                 <p class="mt-2 text-gray-600 max-w-2xl mx-auto">Some work just as hard, yet face hidden barriers. The playing field isn't always level. Click the cards below to see different journeys.</p>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-12">
                     <div class="barrier-card-container aspect-square">
                         <div class="barrier-card relative w-full h-full cursor-pointer" data-clicks-needed="1">
-                            <div class="card-face absolute w-full h-full flex items-center justify-center bg-gray-200 rounded-lg border p-2">Click Me</div>
-                            <div class="card-back absolute w-full h-full flex items-center justify-center bg-green-100 rounded-lg border p-2 text-center">
+                            <div class="card-face absolute w-full h-full flex items-center justify-center bg-gray-200 rounded-lg border border-gray-200 p-2 text-gray-800">Click Me</div>
+                            <div class="card-back absolute w-full h-full flex items-center justify-center bg-green-100 rounded-lg border border-gray-200 p-2 text-center text-gray-800">
                                 <span class="text-2xl">✅</span>
                                 <p class="text-sm font-semibold mt-1">Smooth Path</p>
                             </div>
@@ -116,8 +119,8 @@
                     </div>
                      <div class="barrier-card-container aspect-square">
                         <div class="barrier-card relative w-full h-full cursor-pointer" data-clicks-needed="3">
-                            <div class="card-face absolute w-full h-full flex items-center justify-center bg-gray-200 rounded-lg border p-2">Click Me</div>
-                            <div class="card-back absolute w-full h-full flex items-center justify-center bg-yellow-100 rounded-lg border p-2 text-center">
+                            <div class="card-face absolute w-full h-full flex items-center justify-center bg-gray-200 rounded-lg border border-gray-200 p-2 text-gray-800">Click Me</div>
+                            <div class="card-back absolute w-full h-full flex items-center justify-center bg-yellow-100 rounded-lg border border-gray-200 p-2 text-center text-gray-800">
                                 <span class="text-2xl">🚧</span>
                                <p class="text-sm font-semibold mt-1">Hidden Barrier</p>
                             </div>
@@ -125,8 +128,8 @@
                     </div>
                      <div class="barrier-card-container aspect-square">
                         <div class="barrier-card relative w-full h-full cursor-pointer" data-clicks-needed="1">
-                            <div class="card-face absolute w-full h-full flex items-center justify-center bg-gray-200 rounded-lg border p-2">Click Me</div>
-                            <div class="card-back absolute w-full h-full flex items-center justify-center bg-green-100 rounded-lg border p-2 text-center">
+                            <div class="card-face absolute w-full h-full flex items-center justify-center bg-gray-200 rounded-lg border border-gray-200 p-2 text-gray-800">Click Me</div>
+                            <div class="card-back absolute w-full h-full flex items-center justify-center bg-green-100 rounded-lg border border-gray-200 p-2 text-center text-gray-800">
                                 <span class="text-2xl">✅</span>
                                 <p class="text-sm font-semibold mt-1">Smooth Path</p>
                             </div>
@@ -134,8 +137,8 @@
                     </div>
                      <div class="barrier-card-container aspect-square">
                         <div class="barrier-card relative w-full h-full cursor-pointer" data-clicks-needed="5">
-                             <div class="card-face absolute w-full h-full flex items-center justify-center bg-gray-200 rounded-lg border p-2">Click Me</div>
-                            <div class="card-back absolute w-full h-full flex items-center justify-center bg-red-100 rounded-lg border p-2 text-center">
+                             <div class="card-face absolute w-full h-full flex items-center justify-center bg-gray-200 rounded-lg border border-gray-200 p-2 text-gray-800">Click Me</div>
+                            <div class="card-back absolute w-full h-full flex items-center justify-center bg-red-100 rounded-lg border border-gray-200 p-2 text-center text-gray-800">
                                 <span class="text-2xl">⛔</span>
                                 <p class="text-sm font-semibold mt-1">Systemic Block</p>
                             </div>
@@ -146,7 +149,7 @@
             </div>
         </section>
         
-        <section id="call-to-action" class="py-20 px-4">
+        <section id="call-to-action" class="py-20 px-4 text-gray-800">
             <div class="max-w-4xl mx-auto">
                 <div class="text-center mb-12">
                      <h2 class="text-3xl font-bold text-gray-800">How We Can Make a Difference</h2>
@@ -154,13 +157,13 @@
                 </div>
                 <div class="grid md:grid-cols-2 gap-8">
                     <div class="p-8 rounded-lg bg-white border border-gray-200 text-center hover:shadow-lg transition-shadow">
-                        <span class="text-4xl mb-4 block">🤝</span>
-                        <h3 class="text-xl font-semibold mb-2">Build Fairer Systems</h3>
+                        <span class="text-4xl mb-4 block">🤝🏻</span>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">Build Fairer Systems</h3>
                         <p class="text-gray-600">Let's challenge the status quo and create communities and workplaces that provide a fair chance for everyone to thrive, regardless of their starting point.</p>
                     </div>
                     <div class="p-8 rounded-lg bg-white border border-gray-200 text-center hover:shadow-lg transition-shadow">
                         <span class="text-4xl mb-4 block">❤️</span>
-                        <h3 class="text-xl font-semibold mb-2">Be Kind & Supportive</h3>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">Be Kind & Supportive</h3>
                         <p class="text-gray-600">If you can help create an opportunity or support someone's journey, do so without hesitation. A small act of kindness can make a world of difference.</p>
                     </div>
                 </div>
@@ -170,9 +173,10 @@
         <footer class="py-20 px-4 bg-gray-800 text-white">
             <div class="max-w-4xl mx-auto text-center">
                 <h2 class="text-3xl font-bold">A New Definition of Success</h2>
-                <p class="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
+                <p class="mt-4 text-lg text-gray-400 max-w-2xl mx-auto">
                     True success isn't just about what you achieve. It's about the opportunities you help create for others.
                 </p>
+                <p class="mt-4 text-sm text-gray-400">crafted with ❤️ by <a href="https://www.linkedin.com/in/sandyu732/" target="_blank" rel="noopener noreferrer">Sandeep Upadhyay</a></p>
             </div>
         </footer>
     </main>
@@ -194,7 +198,7 @@
                     this.size = Math.random() * 2 + 1;
                     this.speedX = Math.random() * 1 - 0.5;
                     this.speedY = Math.random() * 1 - 0.5;
-                    this.color = 'rgba(51, 51, 51, 0.1)';
+                    this.color = 'rgba(255, 255, 255, 0.1)';
                 }
                 update() {
                     this.x += this.speedX;
@@ -234,23 +238,44 @@
             window.addEventListener('resize', resizeCanvas);
             const opportunityBtn = document.getElementById('opportunity-btn');
             const bridge = document.getElementById('bridge');
+            const hurdle = document.getElementById('hurdle');
             const opportunityText = document.getElementById('opportunity-text');
             const runner = document.getElementById('runner-start');
             const trophy = document.getElementById('trophy-goal');
+            let transitionStep = 0;
             opportunityBtn.addEventListener('click', () => {
-                opportunityBtn.disabled = true;
-                opportunityBtn.style.backgroundColor = '#16a34a';
-                opportunityBtn.textContent = 'Opportunity Created!';
-                bridge.style.width = '100%';
-                setTimeout(() => {
-                    const runnerRect = runner.getBoundingClientRect();
-                    const trophyRect = trophy.getBoundingClientRect();
-                    const translateXDistance = trophyRect.left - runnerRect.left + trophyRect.width;
-                    runner.style.transition = 'transform 1.5s ease-in-out';
-                    runner.style.transform = `translateX(${translateXDistance}px)`;
-                    opportunityText.style.opacity = '1';
-                    opportunityText.textContent = "The bridge appears, and the path to the goal is now open!";
-                }, 1000);
+                if (transitionStep === 0) {
+                    opportunityBtn.disabled = true;
+                    opportunityBtn.textContent = 'Building Bridge...';
+                    bridge.style.width = '50%';
+                    hurdle.style.opacity = '1';
+                    setTimeout(() => {
+                        opportunityText.style.opacity = '1';
+                        opportunityText.textContent = "An opportunity is created, but there are still obstacles in the way.";
+                        opportunityBtn.textContent = 'Clear the Hurdle';
+                        opportunityBtn.disabled = false;
+                        transitionStep = 1;
+                    }, 1000);
+                } else if (transitionStep === 1) {
+                    opportunityBtn.disabled = true;
+                    opportunityBtn.textContent = 'Clearing Hurdle...';
+                    hurdle.style.transform = 'translateX(-50%) rotate(90deg)';
+                    hurdle.style.opacity = '0';
+                    bridge.style.width = '100%';
+                    setTimeout(() => {
+                        opportunityBtn.textContent = 'Goal Achieved!';
+                        opportunityBtn.disabled = true;
+                        transitionStep = 2;
+                        const runnerRect = runner.getBoundingClientRect();
+                        const trophyRect = trophy.getBoundingClientRect();
+                        const finalDistance = trophyRect.left - runnerRect.left + runner.offsetWidth + 10;
+                        runner.style.transition = 'transform 1.5s ease-in-out';
+                        runner.style.transform = `translateX(${finalDistance}px)`;
+                        opportunityText.textContent = "The path is clear. The goal has been achieved!";
+                    }, 1000);
+                } else if (transitionStep === 2) {
+                    // This block is now intentionally inactive and the button is disabled.
+                }
             });
             const barrierCards = document.querySelectorAll('.barrier-card');
             barrierCards.forEach(card => {
