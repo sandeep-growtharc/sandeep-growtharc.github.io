@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asymmetric Cryptography — A Security Engineer's Visual Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & tokens ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0e1117;--bg2:#161b25;--bg3:#1e2533;--bg4:#252d3d;
+  --border:#2a3447;--border2:#374260;
+  --text:#e2e8f4;--muted:#8899bb;--faint:#4a5a7a;
+  --teal:#2dd4bf;--teal-dim:#0f766e;--teal-bg:#0d2a27;
+  --coral:#fb7185;--coral-dim:#be123c;--coral-bg:#2a0d18;
+  --purple:#a78bfa;--purple-dim:#7c3aed;--purple-bg:#1e1030;
+  --amber:#fbbf24;--amber-dim:#b45309;--amber-bg:#2a1e06;
+  --blue:#60a5fa;--blue-dim:#1d4ed8;--blue-bg:#0d1e3a;
+  --green:#4ade80;--green-dim:#15803d;--green-bg:#0d2a18;
+  --font-display:'Fraunces',Georgia,serif;
+  --font-body:'DM Sans',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+  --radius:8px;--radius-lg:14px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.75;min-height:100vh}
+
+/* ── Layout ── */
+.page-wrap{max-width:860px;margin:0 auto;padding:0 1.5rem 6rem}
+
+/* ── Hero ── */
+.hero{padding:5rem 0 3rem;text-align:center;position:relative}
+.hero-eyebrow{font-family:var(--font-mono);font-size:12px;letter-spacing:.15em;color:var(--teal);text-transform:uppercase;margin-bottom:1.25rem}
+.hero h1{font-family:var(--font-display);font-weight:600;font-size:clamp(2rem,5vw,3.2rem);line-height:1.15;color:#fff;margin-bottom:1.25rem}
+.hero h1 em{font-style:italic;font-weight:300;color:var(--teal)}
+.hero-sub{font-size:1.05rem;color:var(--muted);max-width:540px;margin:0 auto 2rem}
+.hero-tags{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.tag{font-family:var(--font-mono);font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid var(--border2);color:var(--muted)}
+
+/* ── TOC ── */
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem 2rem;margin:2rem 0 3rem}
+.toc-title{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;color:var(--faint);text-transform:uppercase;margin-bottom:1rem}
+.toc ol{padding-left:1.25rem;color:var(--muted);font-size:14px;line-height:2}
+.toc a{color:var(--muted);text-decoration:none;transition:color .15s}
+.toc a:hover{color:var(--teal)}
+
+/* ── Section headings ── */
+.section{margin:4rem 0 2rem}
+.section-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;color:var(--teal);text-transform:uppercase;margin-bottom:.5rem}
+.section h2{font-family:var(--font-display);font-weight:600;font-size:1.75rem;color:#fff;line-height:1.2}
+.section p{color:var(--muted);margin:.75rem 0}
+h3{font-family:var(--font-display);font-weight:600;font-size:1.2rem;color:var(--text);margin:2rem 0 .5rem}
+
+/* ── Prose ── */
+p{color:var(--muted);margin:.75rem 0}
+strong{color:var(--text);font-weight:500}
+em{color:var(--teal);font-style:normal}
+
+/* ── Divider ── */
+.divider{border:none;border-top:1px solid var(--border);margin:3rem 0}
+
+/* ── Concept cards ── */
+.card-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+@media(max-width:560px){.card-row{grid-template-columns:1fr}}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem 1.5rem}
+.card.teal{border-color:var(--teal-dim);background:var(--teal-bg)}
+.card.coral{border-color:var(--coral-dim);background:var(--coral-bg)}
+.card.purple{border-color:var(--purple-dim);background:var(--purple-bg)}
+.card.amber{border-color:var(--amber-dim);background:var(--amber-bg)}
+.card.blue{border-color:var(--blue-dim);background:var(--blue-bg)}
+.card.green{border-color:var(--green-dim);background:var(--green-bg)}
+.card-icon{font-size:1.5rem;margin-bottom:.5rem}
+.card h4{font-family:var(--font-body);font-size:14px;font-weight:500;margin-bottom:.4rem}
+.card.teal h4{color:var(--teal)}
+.card.coral h4{color:var(--coral)}
+.card.purple h4{color:var(--purple)}
+.card.amber h4{color:var(--amber)}
+.card.blue h4{color:var(--blue)}
+.card.green h4{color:var(--green)}
+.card p{font-size:13px;color:var(--muted);margin:0;line-height:1.6}
+
+/* ── Diagram panels ── */
+.diagram{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin:1.5rem 0;overflow:hidden}
+.diagram-title{font-family:var(--font-mono);font-size:11px;color:var(--faint);letter-spacing:.08em;text-transform:uppercase;margin-bottom:1rem}
+svg.diagram-svg{width:100%;height:auto;display:block}
+
+/* ── SVG text classes ── */
+.th{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;fill:#e2e8f4}
+.ts{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:400;fill:#8899bb}
+.c-teal rect,.c-teal circle,.c-teal ellipse{fill:#0d2a27;stroke:#0f766e}
+.c-teal .th{fill:#2dd4bf}.c-teal .ts{fill:#0f766e}
+.c-coral rect,.c-coral circle,.c-coral ellipse{fill:#2a0d18;stroke:#be123c}
+.c-coral .th{fill:#fb7185}.c-coral .ts{fill:#be123c}
+.c-purple rect,.c-purple circle,.c-purple ellipse{fill:#1e1030;stroke:#7c3aed}
+.c-purple .th{fill:#a78bfa}.c-purple .ts{fill:#7c3aed}
+.c-amber rect,.c-amber circle,.c-amber ellipse{fill:#2a1e06;stroke:#b45309}
+.c-amber .th{fill:#fbbf24}.c-amber .ts{fill:#b45309}
+.c-blue rect,.c-blue circle,.c-blue ellipse{fill:#0d1e3a;stroke:#1d4ed8}
+.c-blue .th{fill:#60a5fa}.c-blue .ts{fill:#1d4ed8}
+.c-green rect,.c-green circle,.c-green ellipse{fill:#0d2a18;stroke:#15803d}
+.c-green .th{fill:#4ade80}.c-green .ts{fill:#15803d}
+.c-gray rect,.c-gray circle,.c-gray ellipse{fill:#1e2533;stroke:#374260}
+.c-gray .th{fill:#e2e8f4}.c-gray .ts{fill:#8899bb}
+.arr{stroke:#4a5a7a;stroke-width:1.5;fill:none}
+.leader{stroke:#4a5a7a;stroke-width:0.5;stroke-dasharray:4 3;fill:none}
+
+/* ── Flow diagram (TLS handshake) ── */
+.flow-step{display:flex;gap:1rem;align-items:flex-start;margin:.75rem 0}
+.flow-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:12px;color:var(--muted);margin-top:2px}
+.flow-num.active{background:var(--teal-bg);border-color:var(--teal-dim);color:var(--teal)}
+.flow-body{flex:1}
+.flow-body strong{font-size:14px;color:var(--text);display:block;margin-bottom:2px}
+.flow-body span{font-size:13px;color:var(--muted)}
+.flow-connector{width:1px;height:18px;background:var(--border);margin-left:13px}
+
+/* ── Code blocks ── */
+pre{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;overflow-x:auto;margin:1rem 0}
+code{font-family:var(--font-mono);font-size:13px;color:#a5d8ff;line-height:1.7}
+.cmd-label{font-family:var(--font-mono);font-size:11px;color:var(--faint);letter-spacing:.06em;text-transform:uppercase;margin:1.25rem 0 .25rem}
+.callout{border-radius:var(--radius);padding:.75rem 1rem;font-size:13px;margin:.75rem 0;line-height:1.6}
+.callout.warn{background:var(--amber-bg);border-left:3px solid var(--amber-dim);color:#fbbf24}
+.callout.info{background:var(--blue-bg);border-left:3px solid var(--blue-dim);color:var(--blue)}
+.callout.ok{background:var(--green-bg);border-left:3px solid var(--green-dim);color:var(--green)}
+.callout.danger{background:var(--coral-bg);border-left:3px solid var(--coral-dim);color:var(--coral)}
+
+/* ── Lab sections ── */
+.lab-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);margin:1.5rem 0;overflow:hidden}
+.lab-header{display:flex;align-items:center;gap:.75rem;padding:1rem 1.25rem;border-bottom:1px solid var(--border);background:var(--bg3)}
+.lab-num{font-family:var(--font-mono);font-size:11px;padding:3px 10px;border-radius:12px;background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal-dim)}
+.lab-header h3{margin:0;font-size:15px;font-family:var(--font-body);font-weight:500;color:var(--text)}
+.lab-body{padding:1.25rem}
+.lab-goal{font-size:13px;color:var(--muted);padding:.75rem 1rem;background:var(--bg3);border-radius:var(--radius);margin-bottom:1rem;border-left:2px solid var(--blue-dim)}
+
+/* ── Chain diagram ── */
+.chain{display:flex;flex-direction:column;align-items:center;gap:0;margin:1.5rem 0}
+.chain-box{width:100%;max-width:480px;border-radius:var(--radius-lg);padding:1rem 1.5rem;text-align:center}
+.chain-box h4{font-size:15px;font-weight:500;margin-bottom:.25rem}
+.chain-box p{font-size:12px;margin:0}
+.chain-arrow{font-family:var(--font-mono);font-size:11px;color:var(--faint);padding:.25rem 0;text-align:center}
+
+/* ── Key anatomy table ── */
+.key-table{width:100%;border-collapse:collapse;font-size:13px;margin:1rem 0}
+.key-table th{text-align:left;font-family:var(--font-mono);font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;padding:.5rem .75rem;border-bottom:1px solid var(--border)}
+.key-table td{padding:.6rem .75rem;border-bottom:1px solid var(--border);vertical-align:top}
+.key-table td:first-child{font-family:var(--font-mono);color:var(--teal);width:140px}
+.key-table td:last-child{color:var(--muted)}
+
+/* ── Animation: key pair pulse ── */
+@keyframes pulse-teal{0%,100%{box-shadow:0 0 0 0 rgba(45,212,191,.2)}50%{box-shadow:0 0 0 6px rgba(45,212,191,0)}}
+@keyframes pulse-coral{0%,100%{box-shadow:0 0 0 0 rgba(251,113,133,.2)}50%{box-shadow:0 0 0 6px rgba(251,113,133,0)}}
+@keyframes flow-dash{to{stroke-dashoffset:-20}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.animate-up{animation:fadeUp .5s ease both}
+.delay-1{animation-delay:.1s}.delay-2{animation-delay:.2s}.delay-3{animation-delay:.3s}
+
+/* ── Scrollspy TOC active ── */
+.toc a.active{color:var(--teal)}
+
+/* ── Footer ── */
+.footer{text-align:center;padding:3rem 0 1rem;font-family:var(--font-mono);font-size:12px;color:var(--faint)}
+.footer a{color:var(--teal);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+<!-- ═══ HERO ═══ -->
+<div class="hero animate-up">
+  <div class="hero-eyebrow">Security Engineering Reference</div>
+  <h1>Asymmetric Cryptography<br><em>A Visual Field Guide</em></h1>
+  <p class="hero-sub">Public keys, private keys, certificates, Certificate Authorities, and hands-on OpenSSL labs — from concept to production.</p>
+  <div class="hero-tags">
+    <span class="tag">RSA</span>
+    <span class="tag">X.509</span>
+    <span class="tag">TLS 1.3</span>
+    <span class="tag">OpenSSL</span>
+    <span class="tag">Let's Encrypt</span>
+    <span class="tag">CSR</span>
+    <span class="tag">PKI</span>
+  </div>
+</div>
+
+<!-- ═══ TOC ═══ -->
+<nav class="toc animate-up delay-1">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#concepts">Core concepts — the key pair</a></li>
+    <li><a href="#how-it-works">How asymmetric crypto works</a></li>
+    <li><a href="#certificates">What is an SSL certificate?</a></li>
+    <li><a href="#ca-chain">Certificate Authority &amp; chain of trust</a></li>
+    <li><a href="#tls-handshake">Public keys in TLS/SSL</a></li>
+    <li><a href="#lab-keys">Lab 1 — Generate &amp; inspect keys</a></li>
+    <li><a href="#lab-encrypt">Lab 2 — Encrypt &amp; decrypt</a></li>
+    <li><a href="#lab-sign">Lab 3 — Sign &amp; verify</a></li>
+    <li><a href="#lab-cert">Lab 4 — Self-signed certificate</a></li>
+    <li><a href="#lab-real">Lab 5 — Inspect a real certificate</a></li>
+    <li><a href="#csr">Creating a CSR for a real CA</a></li>
+    <li><a href="#san">Multi-domain certificates (SAN)</a></li>
+    <li><a href="#simulate-ca">Simulating a CA — full PKI flow</a></li>
+    <li><a href="#letsencrypt">Let's Encrypt with Certbot</a></li>
+    <li><a href="#cheatsheet">OpenSSL cheatsheet</a></li>
+  </ol>
+</nav>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 1: Core Concepts ═══ -->
+<div class="section animate-up delay-2" id="concepts">
+  <div class="section-label">Section 1</div>
+  <h2>Core concepts — the key pair</h2>
+  <p>Asymmetric cryptography uses <strong>two mathematically linked keys</strong> that do opposite jobs. What one encrypts, only the other can decrypt. They are always generated together as a pair.</p>
+</div>
+
+<div class="card-row">
+  <div class="card teal">
+    <div class="card-icon">🔓</div>
+    <h4>Public key</h4>
+    <p>Shared freely with everyone. Used to <strong>encrypt data</strong> sent to you, and to <strong>verify signatures</strong> you create. Lives inside your SSL certificate.</p>
+  </div>
+  <div class="card coral">
+    <div class="card-icon">🔒</div>
+    <h4>Private key</h4>
+    <p>Never leaves your server. Used to <strong>decrypt data</strong> encrypted with your public key, and to <strong>create digital signatures</strong> others can verify.</p>
+  </div>
+</div>
+
+<p>The analogy: think of a <strong>padlock and key</strong>. You hand out open padlocks (your public key) to anyone who wants to send you something. They click it shut (encrypt). Only your physical key (private key) can open it. You never hand out your key — just the padlock.</p>
+
+<div class="diagram">
+  <div class="diagram-title">The key pair — mathematical relationship</div>
+  <svg class="diagram-svg" viewBox="0 0 680 120" xmlns="http://www.w3.org/2000/svg" role="img">
+    <title>Key pair diagram</title>
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M2 1L8 5L2 9" fill="none" stroke="#4a5a7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </marker>
+    </defs>
+    <g class="c-teal">
+      <rect x="40" y="30" width="220" height="60" rx="10" stroke-width="0.5"/>
+      <text class="th" x="150" y="55" text-anchor="middle" dominant-baseline="central">🔓 Public key</text>
+      <text class="ts" x="150" y="75" text-anchor="middle" dominant-baseline="central">Share with everyone</text>
+    </g>
+    <line x1="262" y1="60" x2="318" y2="60" stroke="#4a5a7a" stroke-width="1" stroke-dasharray="5 4" marker-end="url(#arr)" marker-start="url(#arr)"/>
+    <rect x="278" y="48" width="84" height="24" rx="4" fill="#161b25"/>
+    <text font-family="'DM Sans',sans-serif" font-size="11" fill="#4a5a7a" x="320" y="63" text-anchor="middle" dominant-baseline="central">Paired</text>
+    <g class="c-coral">
+      <rect x="420" y="30" width="220" height="60" rx="10" stroke-width="0.5"/>
+      <text class="th" x="530" y="55" text-anchor="middle" dominant-baseline="central">🔒 Private key</text>
+      <text class="ts" x="530" y="75" text-anchor="middle" dominant-baseline="central">Never share — keep secret</text>
+    </g>
+  </svg>
+</div>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 2: How It Works ═══ -->
+<div class="section" id="how-it-works">
+  <div class="section-label">Section 2</div>
+  <h2>How asymmetric crypto works</h2>
+  <p>The same key pair is used in two opposite ways depending on the goal.</p>
+</div>
+
+<h3>For confidentiality — encryption</h3>
+<p>Alice wants to send Bob a secret message. She encrypts it with <em>Bob's public key</em>. Only Bob (private key holder) can decrypt it.</p>
+
+<div class="diagram">
+  <div class="diagram-title">Encryption flow</div>
+  <svg class="diagram-svg" viewBox="0 0 680 100" xmlns="http://www.w3.org/2000/svg" role="img">
+    <title>Encryption flow — Alice encrypts with Bob's public key, Bob decrypts with private key</title>
+    <defs><marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#4a5a7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    <g class="c-purple"><rect x="10" y="25" width="100" height="50" rx="8" stroke-width="0.5"/><text class="th" x="60" y="47" text-anchor="middle" dominant-baseline="central">Alice</text><text class="ts" x="60" y="65" text-anchor="middle" dominant-baseline="central">sends msg</text></g>
+    <line x1="112" y1="50" x2="148" y2="50" stroke="#4a5a7a" stroke-width="1" marker-end="url(#arr2)"/>
+    <g class="c-teal"><rect x="150" y="25" width="160" height="50" rx="8" stroke-width="0.5"/><text class="th" x="230" y="44" text-anchor="middle" dominant-baseline="central">Bob's public key</text><text class="ts" x="230" y="62" text-anchor="middle" dominant-baseline="central">Encrypts message</text></g>
+    <line x1="312" y1="50" x2="348" y2="50" stroke="#4a5a7a" stroke-width="1" marker-end="url(#arr2)"/>
+    <g class="c-gray"><rect x="350" y="25" width="90" height="50" rx="8" stroke-width="0.5"/><text class="th" x="395" y="44" text-anchor="middle" dominant-baseline="central">🔐</text><text class="ts" x="395" y="62" text-anchor="middle" dominant-baseline="central">Ciphertext</text></g>
+    <line x1="442" y1="50" x2="478" y2="50" stroke="#4a5a7a" stroke-width="1" marker-end="url(#arr2)"/>
+    <g class="c-coral"><rect x="480" y="25" width="190" height="50" rx="8" stroke-width="0.5"/><text class="th" x="575" y="44" text-anchor="middle" dominant-baseline="central">Bob's private key</text><text class="ts" x="575" y="62" text-anchor="middle" dominant-baseline="central">Decrypts — only Bob can</text></g>
+  </svg>
+</div>
+
+<h3>For authenticity — digital signatures</h3>
+<p>Bob signs a document with his <em>private key</em>. Anyone with Bob's public key can verify it was really him and the document wasn't tampered with.</p>
+
+<div class="diagram">
+  <div class="diagram-title">Digital signature flow</div>
+  <svg class="diagram-svg" viewBox="0 0 680 100" xmlns="http://www.w3.org/2000/svg" role="img">
+    <title>Signature flow — Bob signs with private key, anyone verifies with public key</title>
+    <defs><marker id="arr3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#4a5a7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    <g class="c-coral"><rect x="10" y="25" width="140" height="50" rx="8" stroke-width="0.5"/><text class="th" x="80" y="44" text-anchor="middle" dominant-baseline="central">Bob signs</text><text class="ts" x="80" y="62" text-anchor="middle" dominant-baseline="central">with private key</text></g>
+    <line x1="152" y1="50" x2="188" y2="50" stroke="#4a5a7a" stroke-width="1" marker-end="url(#arr3)"/>
+    <g class="c-gray"><rect x="190" y="25" width="80" height="50" rx="8" stroke-width="0.5"/><text class="th" x="230" y="44" text-anchor="middle" dominant-baseline="central">✍️</text><text class="ts" x="230" y="62" text-anchor="middle" dominant-baseline="central">Signature</text></g>
+    <line x1="272" y1="50" x2="308" y2="50" stroke="#4a5a7a" stroke-width="1" marker-end="url(#arr3)"/>
+    <g class="c-teal"><rect x="310" y="25" width="200" height="50" rx="8" stroke-width="0.5"/><text class="th" x="410" y="44" text-anchor="middle" dominant-baseline="central">Anyone verifies</text><text class="ts" x="410" y="62" text-anchor="middle" dominant-baseline="central">using Bob's public key</text></g>
+    <line x1="512" y1="50" x2="548" y2="50" stroke="#4a5a7a" stroke-width="1" marker-end="url(#arr3)"/>
+    <g class="c-green"><rect x="550" y="25" width="110" height="50" rx="8" stroke-width="0.5"/><text class="th" x="605" y="44" text-anchor="middle" dominant-baseline="central">✅ Verified</text><text class="ts" x="605" y="62" text-anchor="middle" dominant-baseline="central">Not tampered</text></g>
+  </svg>
+</div>
+
+<div class="card-row">
+  <div class="card blue">
+    <h4>Encryption rule</h4>
+    <p>Encrypt with <strong>public key</strong> → only private key can decrypt.</p>
+  </div>
+  <div class="card purple">
+    <h4>Signature rule</h4>
+    <p>Sign with <strong>private key</strong> → anyone with the public key can verify.</p>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 3: Certificates ═══ -->
+<div class="section" id="certificates">
+  <div class="section-label">Section 3</div>
+  <h2>What is an SSL certificate?</h2>
+  <p>A public key by itself is anonymous — anyone could claim it belongs to <code>google.com</code>. A <strong>certificate</strong> is a signed document that binds a public key to a verified identity.</p>
+</div>
+
+<div class="diagram">
+  <div class="diagram-title">X.509 certificate anatomy</div>
+  <svg class="diagram-svg" viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img">
+    <title>X.509 certificate fields — subject, issuer, validity, public key, CA signature</title>
+    <g class="c-blue">
+      <rect x="20" y="15" width="640" height="200" rx="14" stroke-width="0.5"/>
+      <text class="th" x="340" y="42" text-anchor="middle" dominant-baseline="central">📄  SSL Certificate (X.509)</text>
+    </g>
+    <g class="c-gray"><rect x="40" y="58" width="180" height="52" rx="8" stroke-width="0.5"/><text class="th" x="130" y="78" text-anchor="middle" dominant-baseline="central">Subject</text><text class="ts" x="130" y="96" text-anchor="middle" dominant-baseline="central">example.com</text></g>
+    <g class="c-gray"><rect x="240" y="58" width="180" height="52" rx="8" stroke-width="0.5"/><text class="th" x="330" y="78" text-anchor="middle" dominant-baseline="central">Issuer</text><text class="ts" x="330" y="96" text-anchor="middle" dominant-baseline="central">Let's Encrypt CA</text></g>
+    <g class="c-gray"><rect x="440" y="58" width="200" height="52" rx="8" stroke-width="0.5"/><text class="th" x="540" y="78" text-anchor="middle" dominant-baseline="central">Validity</text><text class="ts" x="540" y="96" text-anchor="middle" dominant-baseline="central">2024-01 → 2025-01</text></g>
+    <g class="c-teal"><rect x="40" y="122" width="580" height="52" rx="8" stroke-width="1"/><text class="th" x="330" y="142" text-anchor="middle" dominant-baseline="central">Public key info</text><text class="ts" x="200" y="162" text-anchor="middle" dominant-baseline="central">Algorithm: RSA-2048 or ECDSA P-256</text><text class="ts" x="500" y="162" text-anchor="middle" dominant-baseline="central">Key material: 2048 bits (~617 digits)</text></g>
+    <g class="c-purple"><rect x="40" y="184" width="580" height="22" rx="6" stroke-width="0.5"/><text class="ts" x="330" y="197" text-anchor="middle" dominant-baseline="central">CA digital signature — proves the CA verified the identity above</text></g>
+  </svg>
+</div>
+
+<p>The CA's signature at the bottom is what makes a certificate trustworthy. It says: <em>"I, Let's Encrypt, verified that this public key genuinely belongs to example.com."</em></p>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 4: CA Chain ═══ -->
+<div class="section" id="ca-chain">
+  <div class="section-label">Section 4</div>
+  <h2>Certificate Authority &amp; chain of trust</h2>
+  <p>Your browser comes pre-loaded with a list of trusted <strong>Root CAs</strong>. It verifies certificates by walking up the chain until it reaches one it recognises.</p>
+</div>
+
+<div class="chain">
+  <div class="chain-box" style="background:var(--amber-bg);border:1px solid var(--amber-dim)">
+    <h4 style="color:var(--amber)">🏛️  Root CA</h4>
+    <p style="color:#b45309;font-size:13px">e.g. DigiCert, ISRG (Let's Encrypt), Comodo<br>Pre-trusted by your OS &amp; browser. Kept offline (air-gapped).</p>
+  </div>
+  <div class="chain-arrow">↓ signs</div>
+  <div class="chain-box" style="background:var(--purple-bg);border:1px solid var(--purple-dim)">
+    <h4 style="color:var(--purple)">🏢  Intermediate CA</h4>
+    <p style="color:#7c3aed;font-size:13px">Does the day-to-day signing. Protects Root CA from exposure.<br>If compromised, only this branch is revoked.</p>
+  </div>
+  <div class="chain-arrow">↓ signs</div>
+  <div class="chain-box" style="background:var(--blue-bg);border:1px solid var(--blue-dim)">
+    <h4 style="color:var(--blue)">📄  Your website certificate</h4>
+    <p style="color:#1d4ed8;font-size:13px">example.com — contains your public key + domain identity.<br>This is what the browser receives in the TLS handshake.</p>
+  </div>
+</div>
+
+<div class="callout info">Break any link in the chain (expired cert, wrong CA, revoked intermediate) and the browser shows a ⚠️ warning and blocks the connection.</div>
+
+<hr class="divider">
+
+<!-- ═══ SECTION 5: TLS Handshake ═══ -->
+<div class="section" id="tls-handshake">
+  <div class="section-label">Section 5</div>
+  <h2>Public keys in TLS/SSL</h2>
+  <p>The public key has <strong>two jobs</strong> during a TLS connection: authenticate the server's identity, and bootstrap a shared secret for the session.</p>
+</div>
+
+<h3>The TLS handshake step by step</h3>
+
+<div class="flow-step">
+  <div class="flow-num">1</div>
+  <div class="flow-body"><strong>ClientHello</strong><span>Browser sends: supported cipher suites, TLS version, random nonce.</span></div>
+</div>
+<div class="flow-connector"></div>
+<div class="flow-step">
+  <div class="flow-num">2</div>
+  <div class="flow-body"><strong>ServerHello + Certificate</strong><span>Server responds with its SSL certificate — containing its <em>public key</em>.</span></div>
+</div>
+<div class="flow-connector"></div>
+<div class="flow-step">
+  <div class="flow-num active">3</div>
+  <div class="flow-body"><strong>Certificate verification</strong><span>Browser walks the chain of trust up to a trusted Root CA. Checks domain match and expiry.</span></div>
+</div>
+<div class="flow-connector"></div>
+<div class="flow-step">
+  <div class="flow-num active">4</div>
+  <div class="flow-body"><strong>Key exchange — public key used here</strong><span>Browser generates a pre-master secret and encrypts it with the server's <em>public key</em>. Only the server can decrypt it.</span></div>
+</div>
+<div class="flow-connector"></div>
+<div class="flow-step">
+  <div class="flow-num">5</div>
+  <div class="flow-body"><strong>Server decrypts with private key</strong><span>Server decrypts the pre-master secret. Both sides derive the same symmetric session key.</span></div>
+</div>
+<div class="flow-connector"></div>
+<div class="flow-step">
+  <div class="flow-num">6</div>
+  <div class="flow-body"><strong>Encrypted channel (HTTPS)</strong><span>All further traffic uses AES (symmetric). Public key's job is done.</span></div>
+</div>
+
+<div class="callout info" style="margin-top:1.5rem"><strong>TLS 1.3 note:</strong> RSA key exchange was removed. ECDHE (Diffie-Hellman) is used instead, providing <em>forward secrecy</em> — past sessions can't be decrypted even if the private key is stolen later. The public key is still used for authentication/signature verification.</div>
+
+<div class="card-row">
+  <div class="card teal">
+    <h4>Why switch to AES after handshake?</h4>
+    <p>RSA is 100–1000× slower than AES. Public key crypto is used once to bootstrap trust. AES encrypts the actual data stream.</p>
+  </div>
+  <div class="card purple">
+    <h4>What is forward secrecy?</h4>
+    <p>Ephemeral (one-time) key pairs are generated per session. Old sessions can't be decrypted later even with the private key.</p>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══ LABS ═══ -->
+<div class="section" id="lab-keys">
+  <div class="section-label">Hands-on Lab</div>
+  <h2>OpenSSL command-line labs</h2>
+  <p>All you need is <code>openssl</code> — pre-installed on macOS and most Linux distros. Check with <code>openssl version</code>.</p>
+</div>
+
+<!-- Lab 1 -->
+<div class="lab-section">
+  <div class="lab-header">
+    <span class="lab-num">Lab 1</span>
+    <h3>Generate &amp; inspect a key pair</h3>
+  </div>
+  <div class="lab-body">
+    <div class="lab-goal">Goal — generate an RSA key pair and understand what the numbers inside actually mean.</div>
+
+    <div class="cmd-label">Generate a 2048-bit RSA private key</div>
+    <pre><code>openssl genrsa -out private.pem 2048</code></pre>
+
+    <div class="cmd-label">Extract the public key from it</div>
+    <pre><code>openssl rsa -in private.pem -pubout -out public.pem</code></pre>
+
+    <div class="cmd-label">Decode the private key — see the actual numbers</div>
+    <pre><code>openssl rsa -in private.pem -text -noout</code></pre>
+
+    <table class="key-table">
+      <thead><tr><th>Field</th><th>What it is</th></tr></thead>
+      <tbody>
+        <tr><td>modulus</td><td>N = p × q (two secret primes multiplied). This is public.</td></tr>
+        <tr><td>publicExponent</td><td>Always 65537 (0x10001). This is public.</td></tr>
+        <tr><td>privateExponent</td><td>The secret d, derived from p and q. Keep secret.</td></tr>
+        <tr><td>prime1, prime2</td><td>The two secret primes p and q. The core secret.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="cmd-label">Decode just the public key — notice what's missing</div>
+    <pre><code>openssl rsa -pubin -in public.pem -text -noout</code></pre>
+    <p>Only <code>modulus</code> and <code>publicExponent</code> are visible. The security of RSA relies on the impossibility of factoring N back into p and q for 2048-bit keys.</p>
+  </div>
+</div>
+
+<!-- Lab 2 -->
+<div class="lab-section" id="lab-encrypt">
+  <div class="lab-header">
+    <span class="lab-num">Lab 2</span>
+    <h3>Encrypt &amp; decrypt a message</h3>
+  </div>
+  <div class="lab-body">
+    <div class="lab-goal">Goal — encrypt with the public key, decrypt with the private key. Proves only the private key holder can read it.</div>
+
+    <div class="cmd-label">Create a test message</div>
+    <pre><code>echo "Hello from the TLS lab!" > message.txt</code></pre>
+
+    <div class="cmd-label">Encrypt with the PUBLIC key (anyone can do this)</div>
+    <pre><code>openssl rsautl -encrypt \
+  -inkey public.pem \
+  -pubin \
+  -in message.txt \
+  -out message.enc</code></pre>
+
+    <div class="cmd-label">Decrypt with the PRIVATE key (only key holder can do this)</div>
+    <pre><code>openssl rsautl -decrypt \
+  -inkey private.pem \
+  -in message.enc \
+  -out decrypted.txt
+
+cat decrypted.txt</code></pre>
+
+    <div class="callout ok">You should see: <code>Hello from the TLS lab!</code> — exactly what a TLS handshake does when bootstrapping a session key.</div>
+  </div>
+</div>
+
+<!-- Lab 3 -->
+<div class="lab-section" id="lab-sign">
+  <div class="lab-header">
+    <span class="lab-num">Lab 3</span>
+    <h3>Sign &amp; verify a message</h3>
+  </div>
+  <div class="lab-body">
+    <div class="lab-goal">Goal — sign with the private key, verify with the public key. Then intentionally tamper with the message to see verification fail.</div>
+
+    <div class="cmd-label">Sign with the PRIVATE key</div>
+    <pre><code>openssl dgst -sha256 \
+  -sign private.pem \
+  -out message.sig \
+  message.txt</code></pre>
+
+    <div class="cmd-label">Verify with the PUBLIC key</div>
+    <pre><code>openssl dgst -sha256 \
+  -verify public.pem \
+  -signature message.sig \
+  message.txt</code></pre>
+    <div class="callout ok">Expected output: <code>Verified OK</code></div>
+
+    <div class="cmd-label">Tamper with the message and verify again</div>
+    <pre><code>echo "Tampered!" > message.txt
+
+openssl dgst -sha256 \
+  -verify public.pem \
+  -signature message.sig \
+  message.txt</code></pre>
+    <div class="callout danger">Expected output: <code>Verification Failure</code> — any change to the data invalidates the signature. This is how TLS detects man-in-the-middle tampering.</div>
+  </div>
+</div>
+
+<!-- Lab 4 -->
+<div class="lab-section" id="lab-cert">
+  <div class="lab-header">
+    <span class="lab-num">Lab 4</span>
+    <h3>Create a self-signed certificate</h3>
+  </div>
+  <div class="lab-body">
+    <div class="lab-goal">Goal — bundle your public key with identity info and sign it yourself. Useful for internal servers and testing.</div>
+
+    <div class="cmd-label">Generate private key + self-signed cert in one command</div>
+    <pre><code>openssl req -x509 -new \
+  -key private.pem \
+  -sha256 \
+  -days 365 \
+  -out cert.pem \
+  -subj "/CN=myserver.local/O=My Lab/C=US"</code></pre>
+
+    <div class="cmd-label">Inspect the certificate in human-readable form</div>
+    <pre><code>openssl x509 -in cert.pem -text -noout</code></pre>
+    <p>Notice: the <strong>Issuer</strong> and <strong>Subject</strong> are the same — that's the tell for a self-signed cert. Browsers show a warning because no trusted CA signed it.</p>
+
+    <div class="cmd-label">Extract just the public key from the cert</div>
+    <pre><code>openssl x509 -in cert.pem -pubkey -noout</code></pre>
+    <p>This should match your <code>public.pem</code> — the certificate is just a wrapper tying the public key to an identity.</p>
+  </div>
+</div>
+
+<!-- Lab 5 -->
+<div class="lab-section" id="lab-real">
+  <div class="lab-header">
+    <span class="lab-num">Lab 5</span>
+    <h3>Inspect a real production certificate</h3>
+  </div>
+  <div class="lab-body">
+    <div class="lab-goal">Goal — connect to a live HTTPS server and read its certificate. See everything above in a real-world context.</div>
+
+    <div class="cmd-label">Fetch and decode GitHub's certificate</div>
+    <pre><code>openssl s_client -connect github.com:443 \
+  -showcerts &lt;/dev/null 2&gt;/dev/null \
+  | openssl x509 -text -noout</code></pre>
+
+    <div class="cmd-label">View the full certificate chain (CA hierarchy)</div>
+    <pre><code>openssl s_client -connect github.com:443 \
+  -showcerts &lt;/dev/null 2&gt;/dev/null \
+  | grep "subject\|issuer"</code></pre>
+    <p>You'll see 2–3 certificates: your server cert → Intermediate CA → Root CA. This is the chain of trust rendered live.</p>
+
+    <div class="cmd-label">Check certificate expiry (useful in scripts/monitoring)</div>
+    <pre><code>openssl s_client -connect github.com:443 \
+  &lt;/dev/null 2&gt;/dev/null \
+  | openssl x509 -noout -dates</code></pre>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══ CSR ═══ -->
+<div class="section" id="csr">
+  <div class="section-label">Section 6</div>
+  <h2>Creating a CSR for a real CA</h2>
+  <p>A <strong>CSR (Certificate Signing Request)</strong> is the file you send to a CA asking them to sign your public key and vouch for your identity. Your private key never leaves your server.</p>
+</div>
+
+<div class="diagram">
+  <div class="diagram-title">CSR flow — your server to CA and back</div>
+  <svg class="diagram-svg" viewBox="0 0 680 110" xmlns="http://www.w3.org/2000/svg" role="img">
+    <title>CSR flow: server generates key pair and CSR, sends CSR to CA, CA signs and returns certificate</title>
+    <defs><marker id="arr4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#4a5a7a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    <g class="c-teal"><rect x="10" y="30" width="130" height="50" rx="8" stroke-width="0.5"/><text class="th" x="75" y="50" text-anchor="middle" dominant-baseline="central">Your server</text><text class="ts" x="75" y="68" text-anchor="middle" dominant-baseline="central">private.pem</text></g>
+    <line x1="142" y1="55" x2="178" y2="55" stroke="#4a5a7a" stroke-width="1" marker-end="url(#arr4)"/>
+    <g class="c-gray"><rect x="180" y="30" width="120" height="50" rx="8" stroke-width="0.5"/><text class="th" x="240" y="50" text-anchor="middle" dominant-baseline="central">CSR</text><text class="ts" x="240" y="68" text-anchor="middle" dominant-baseline="central">server.csr</text></g>
+    <line x1="302" y1="55" x2="338" y2="55" stroke="#4a5a7a" stroke-width="1" marker-end="url(#arr4)"/>
+    <g class="c-amber"><rect x="340" y="30" width="130" height="50" rx="8" stroke-width="0.5"/><text class="th" x="405" y="50" text-anchor="middle" dominant-baseline="central">CA</text><text class="ts" x="405" y="68" text-anchor="middle" dominant-baseline="central">verifies + signs</text></g>
+    <line x1="472" y1="55" x2="508" y2="55" stroke="#4a5a7a" stroke-width="1" marker-end="url(#arr4)"/>
+    <g class="c-purple"><rect x="510" y="30" width="158" height="50" rx="8" stroke-width="0.5"/><text class="th" x="589" y="50" text-anchor="middle" dominant-baseline="central">Certificate</text><text class="ts" x="589" y="68" text-anchor="middle" dominant-baseline="central">cert.pem returned</text></g>
+    <text font-family="'DM Sans',sans-serif" font-size="11" fill="#4a5a7a" x="340" y="100" text-anchor="middle">Your private key stays on your server throughout — it is never transmitted</text>
+  </svg>
+</div>
+
+<div class="cmd-label">Generate a new private key + CSR together</div>
+<pre><code>openssl req -new \
+  -newkey rsa:2048 \
+  -keyout private.pem \
+  -out server.csr \
+  -subj "/CN=yourdomain.com/O=Your Org/OU=Engineering/C=US/ST=California/L=San Jose"</code></pre>
+
+<table class="key-table">
+  <thead><tr><th>Field</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr><td>CN=</td><td>Common Name — the primary domain. Must exactly match what users browse to.</td></tr>
+    <tr><td>O=</td><td>Organisation name</td></tr>
+    <tr><td>OU=</td><td>Organisational unit (team/department)</td></tr>
+    <tr><td>C=</td><td>Country (2-letter ISO code, e.g. US, GB, IN)</td></tr>
+    <tr><td>ST=</td><td>State or Province</td></tr>
+    <tr><td>L=</td><td>City / Locality</td></tr>
+  </tbody>
+</table>
+
+<div class="cmd-label">Verify your CSR looks correct before sending</div>
+<pre><code>openssl req -in server.csr -text -noout
+openssl req -in server.csr -verify -noout</code></pre>
+
+<hr class="divider">
+
+<!-- ═══ SAN ═══ -->
+<div class="section" id="san">
+  <div class="section-label">Section 7</div>
+  <h2>Multi-domain certificates — Subject Alternative Names</h2>
+  <p>Browsers stopped respecting the <code>CN</code> field for hostname matching in 2017. All modern certificates require <strong>Subject Alternative Names (SANs)</strong> to list every domain covered.</p>
+</div>
+
+<div class="callout warn">A certificate without SANs will fail hostname verification in all modern browsers, even if the CN looks correct.</div>
+
+<div class="cmd-label">Create a SAN config file</div>
+<pre><code>cat > san.cnf &lt;&lt; 'EOF'
+[req]
+default_bits       = 2048
+prompt             = no
+default_md         = sha256
+distinguished_name = dn
+req_extensions     = req_ext
+
+[dn]
+CN = yourdomain.com
+O  = Your Org
+C  = US
+
+[req_ext]
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = yourdomain.com
+DNS.2 = www.yourdomain.com
+DNS.3 = api.yourdomain.com
+DNS.4 = staging.yourdomain.com
+IP.1  = 192.168.1.10
+EOF</code></pre>
+
+<div class="cmd-label">Generate CSR using the config</div>
+<pre><code>openssl req -new \
+  -key private.pem \
+  -out server_san.csr \
+  -config san.cnf</code></pre>
+
+<div class="cmd-label">Verify the SANs are embedded in the CSR</div>
+<pre><code>openssl req -in server_san.csr -text -noout \
+  | grep -A4 "Subject Alternative"</code></pre>
+
+<div class="callout info"><strong>Wildcard certs:</strong> use <code>DNS.1 = *.yourdomain.com</code> to cover all subdomains with one cert. Wildcards only go one level deep — <code>*.example.com</code> does NOT cover <code>sub.sub.example.com</code>.</div>
+
+<hr class="divider">
+
+<!-- ═══ SIMULATE CA ═══ -->
+<div class="section" id="simulate-ca">
+  <div class="section-label">Section 8</div>
+  <h2>Simulating a CA — the full PKI flow</h2>
+  <p>This exercise makes you the CA. It's invaluable for understanding internal PKI (corporate VPNs, internal tools, mutual TLS between microservices).</p>
+</div>
+
+<div class="lab-section">
+  <div class="lab-header">
+    <span class="lab-num">Full PKI</span>
+    <h3>Create a CA, sign a CSR, verify the chain</h3>
+  </div>
+  <div class="lab-body">
+
+    <div class="cmd-label">Step A — create your CA key pair (you are now the CA)</div>
+    <pre><code>openssl genrsa -out ca-private.pem 4096
+
+openssl req -x509 -new \
+  -key ca-private.pem \
+  -sha256 -days 1825 \
+  -out ca-cert.pem \
+  -subj "/CN=My Lab CA/O=Lab/C=US"</code></pre>
+    <div class="callout danger"><strong>Guard ca-private.pem with extreme care.</strong> Anyone who holds it can issue certificates trusted by any system that trusts your CA. In real PKIs the Root CA private key is stored offline on an HSM.</div>
+
+    <div class="cmd-label">Step B — CA signs the server CSR</div>
+    <pre><code>openssl x509 -req \
+  -in server.csr \
+  -CA ca-cert.pem \
+  -CAkey ca-private.pem \
+  -CAcreateserial \
+  -out server-cert.pem \
+  -days 365 \
+  -sha256</code></pre>
+
+    <div class="cmd-label">Step C — verify the cert chains to your CA</div>
+    <pre><code>openssl verify -CAfile ca-cert.pem server-cert.pem</code></pre>
+    <div class="callout ok">Expected: <code>server-cert.pem: OK</code> — this is exactly what a browser does during a TLS handshake.</div>
+
+    <div class="cmd-label">Step D — inspect the final signed cert</div>
+    <pre><code>openssl x509 -in server-cert.pem -text -noout</code></pre>
+    <p>The <strong>Issuer</strong> field now reads "My Lab CA" — proving it was signed by your CA. The <strong>Subject</strong> is your server. The <strong>Signature</strong> at the bottom is the CA's cryptographic stamp.</p>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══ LET'S ENCRYPT ═══ -->
+<div class="section" id="letsencrypt">
+  <div class="section-label">Section 9</div>
+  <h2>Let's Encrypt with Certbot</h2>
+  <p>For real, browser-trusted certificates. Free, automated, and the most widely used CA on the internet. Certbot handles the CSR creation, domain verification, and certificate retrieval automatically.</p>
+</div>
+
+<div class="cmd-label">Install Certbot — Ubuntu/Debian</div>
+<pre><code>sudo apt install certbot</code></pre>
+
+<div class="cmd-label">Install Certbot — macOS</div>
+<pre><code>brew install certbot</code></pre>
+
+<div class="cmd-label">Option A — standalone mode (port 80 must be free)</div>
+<pre><code>sudo certbot certonly --standalone \
+  -d yourdomain.com \
+  -d www.yourdomain.com</code></pre>
+
+<div class="cmd-label">Option B — DNS challenge (required for wildcard certs)</div>
+<pre><code>sudo certbot certonly --manual \
+  --preferred-challenges dns \
+  -d "*.yourdomain.com" \
+  -d yourdomain.com</code></pre>
+
+<div class="cmd-label">Where your cert files land</div>
+<pre><code>/etc/letsencrypt/live/yourdomain.com/
+  ├── privkey.pem    ← your private key (guard this)
+  ├── cert.pem       ← your certificate
+  ├── chain.pem      ← intermediate CA cert
+  └── fullchain.pem  ← cert + chain combined (use this in nginx/apache)</code></pre>
+
+<div class="cmd-label">Auto-renew test (certs expire after 90 days)</div>
+<pre><code>sudo certbot renew --dry-run</code></pre>
+
+<div class="callout warn">Expired certs are one of the most common HTTPS outage causes. Always confirm the auto-renew cron/systemd timer is active in production.</div>
+
+<div class="cmd-label">nginx config snippet</div>
+<pre><code>ssl_certificate     /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;</code></pre>
+
+<hr class="divider">
+
+<!-- ═══ CHEATSHEET ═══ -->
+<div class="section" id="cheatsheet">
+  <div class="section-label">Quick Reference</div>
+  <h2>OpenSSL cheatsheet</h2>
+</div>
+
+<h3>Key generation</h3>
+<pre><code># RSA private key
+openssl genrsa -out private.pem 2048
+
+# Extract public key
+openssl rsa -in private.pem -pubout -out public.pem
+
+# Inspect private key
+openssl rsa -in private.pem -text -noout
+
+# Inspect public key
+openssl rsa -pubin -in public.pem -text -noout</code></pre>
+
+<h3>Encryption &amp; decryption</h3>
+<pre><code># Encrypt with public key
+openssl rsautl -encrypt -inkey public.pem -pubin -in file.txt -out file.enc
+
+# Decrypt with private key
+openssl rsautl -decrypt -inkey private.pem -in file.enc -out file.txt</code></pre>
+
+<h3>Signing &amp; verification</h3>
+<pre><code># Sign
+openssl dgst -sha256 -sign private.pem -out file.sig file.txt
+
+# Verify
+openssl dgst -sha256 -verify public.pem -signature file.sig file.txt</code></pre>
+
+<h3>Certificates</h3>
+<pre><code># Self-signed cert
+openssl req -x509 -new -key private.pem -sha256 -days 365 \
+  -out cert.pem -subj "/CN=example.com/O=Org/C=US"
+
+# Inspect a cert
+openssl x509 -in cert.pem -text -noout
+
+# Check expiry
+openssl x509 -in cert.pem -noout -dates
+
+# Extract public key from cert
+openssl x509 -in cert.pem -pubkey -noout</code></pre>
+
+<h3>CSR</h3>
+<pre><code># Generate key + CSR
+openssl req -new -newkey rsa:2048 -keyout private.pem \
+  -out server.csr -subj "/CN=yourdomain.com/O=Org/C=US"
+
+# Inspect CSR
+openssl req -in server.csr -text -noout
+
+# Verify CSR signature
+openssl req -in server.csr -verify -noout
+
+# CA signs a CSR
+openssl x509 -req -in server.csr -CA ca-cert.pem \
+  -CAkey ca-private.pem -CAcreateserial \
+  -out server-cert.pem -days 365 -sha256
+
+# Verify cert against CA
+openssl verify -CAfile ca-cert.pem server-cert.pem</code></pre>
+
+<h3>Live server inspection</h3>
+<pre><code># Fetch and decode a live cert
+openssl s_client -connect github.com:443 \
+  -showcerts &lt;/dev/null 2&gt;/dev/null | openssl x509 -text -noout
+
+# View cert chain
+openssl s_client -connect github.com:443 \
+  -showcerts &lt;/dev/null 2&gt;/dev/null | grep "subject\|issuer"
+
+# Check expiry of live cert
+openssl s_client -connect github.com:443 \
+  &lt;/dev/null 2&gt;/dev/null | openssl x509 -noout -dates</code></pre>
+
+<hr class="divider">
+
+<div class="footer">
+  Built with OpenSSL · Asymmetric Cryptography Visual Guide ·
+  <a href="https://letsencrypt.org">Let's Encrypt</a> ·
+  <a href="https://www.openssl.org/docs/">OpenSSL docs</a>
+</div>
+
+</div><!-- /page-wrap -->
+
+<script>
+const links = document.querySelectorAll('.toc a');
+const sections = document.querySelectorAll('[id]');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      links.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector(`.toc a[href="#${e.target.id}"]`);
+      if(active) active.classList.add('active');
+    }
+  });
+},{rootMargin:'-20% 0px -70% 0px'});
+sections.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>
